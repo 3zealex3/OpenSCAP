@@ -1,0 +1,49 @@
+-----Instalación de OpenSCAP (Servidor y cliente------------
+
+
+Servidor:
+sudo dnf install openscap-scanner scap-security-guide scap-workbench -y
+
+Cliente:
+sudo dnf install openscap-scanner scap-security-guide -y
+
+Servidor:
+scap-workbench
+-------------------Vulnerabilidades----------------
+
+Telnet (inseguro)
+sudo dnf install telnet-server -y
+sudo systemctl enable --now telnet.socket
+sudo firewall-cmd --add-port=23/tcp --permanent
+sudo firewall-cmd --reload
+
+FTP sin cifrado
+sudo dnf install vsftpd -y
+sudo systemctl enable --now vsftpd
+
+Deshabilitar firewall
+
+(Pci-DSS exige firewall activo)
+
+sudo systemctl stop firewalld
+
+
+-------------------Remediar----------------------
+
+scp /home/eze-20242286/Escritorio/remediation.sh Ezequiel2286@192.168.229.129:/home/Ezequiel2286/
+
+
+
+---------------Zona por defecto-----------------------
+
+sudo sed -i 's/^DefaultZone=.*/DefaultZone=drop/' /etc/firewalld/firewalld.conf
+
+
+sudo firewall-cmd --reload
+
+
+sudo firewall-cmd --get-default-zone
+sudo firewall-cmd --list-all
+
+
+
