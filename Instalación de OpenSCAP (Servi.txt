@@ -9,7 +9,7 @@ sudo dnf install openscap-scanner scap-security-guide -y
 
 Servidor:
 scap-workbench
--------------------Vulnerabilidades----------------
+-------------------Vulnerabilidades para el cliente----------------
 
 Telnet (inseguro)
 sudo dnf install telnet-server -y
@@ -28,7 +28,9 @@ Deshabilitar firewall
 sudo systemctl stop firewalld
 
 
--------------------Remediar----------------------
+----------------------------------------------------Remediar--------------------------------------------------------
+
+--------------"Cambiar por los valores correspondientes a su caso"-----------------------
 
 scp /home/eze-20242286/Escritorio/remediation.sh Ezequiel2286@192.168.229.129:/home/Ezequiel2286/
 
@@ -44,6 +46,7 @@ sudo firewall-cmd --reload
 
 sudo firewall-cmd --get-default-zone
 sudo firewall-cmd --list-all
+
 
 
 
