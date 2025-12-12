@@ -135,3 +135,13 @@ sudo nano /etc/audit/rules.d/hardening.rules
 
 sudo augenrules --load
 sudo auditctl -l
+
+--------------Configurar SSH-----------------------
+
+sudo nano /etc/ssh/sshd_config
+
+MaxAuthTries 3
+MaxSessions 10
+ClientAliveInterval 0
+ClientAliveCountMax 3
+
