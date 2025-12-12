@@ -9,7 +9,7 @@ sudo dnf install openscap-scanner scap-security-guide -y
 
 Servidor:
 scap-workbench
--------------------Vulnerabilidades para el cliente----------------
+-------------------Vulnerabilidades----------------
 
 Telnet (inseguro)
 sudo dnf install telnet-server -y
@@ -28,11 +28,67 @@ Deshabilitar firewall
 sudo systemctl stop firewalld
 
 
-----------------------------------------------------Remediar--------------------------------------------------------
 
---------------"Cambiar por los valores correspondientes a su caso"-----------------------
+Cliente:
+
+-------------------Remediar----------------------
 
 scp /home/eze-20242286/Escritorio/remediation.sh Ezequiel2286@192.168.229.129:/home/Ezequiel2286/
+
+
+sudo nano /etc/pam.d/system-auth
+
+retry=3 enforce_for_root=
+
+
+sudo nano /etc/security/pwquality.conf
+
+minlen = 12
+dcredit = -1
+ucredit = -1
+lcredit = -1
+ocredit = -1
+minclass = 4
+maxrepeat = 3
+maxclassrepeat = 4
+gecoscheck = 1
+difok = 4
+retry = 3
+
+
+
+/etc/security/faillock.conf
+
+deny = 3
+fail_interval = 900
+unlock_time = 900
+even_deny_root
+
+
+
+
+--------------Firewall---------------------------------------
+sudo firewall-cmd --zone=public --change-interface=ens160 --permanent
+sudo firewall-cmd --zone=public --add-service={https,https,ssh} --permanent
+
+
+---------------------Cripto-----------------------------------
+sudo aide --init
+sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+sudo aide --check
+
+echo '# AIDE daily check' | sudo tee -a /etc/cron.d/aide
+echo '0 5 * * * root /usr/sbin/aide --check' | sudo tee -a /etc/cron.d/aide
+
+sudo systemctl enable --now aidecheck.service 2>/dev/null
+sudo systemctl enable --now aidecheck.timer 2>/dev/null
+
+sudo update-crypto-policies --set FUTURE
+
+sudo nano /etc/crypto-policies/back-ends/openssh.config
+
+sudo systemctl restart sshd
 
 
 
