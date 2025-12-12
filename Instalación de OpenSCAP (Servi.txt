@@ -36,17 +36,4 @@ scp /home/eze-20242286/Escritorio/remediation.sh Ezequiel2286@192.168.229.129:/h
 
 
 
----------------Zona por defecto-----------------------
-
-sudo sed -i 's/^DefaultZone=.*/DefaultZone=drop/' /etc/firewalld/firewalld.conf
-
-
-sudo firewall-cmd --reload
-
-
-sudo firewall-cmd --get-default-zone
-sudo firewall-cmd --list-all
-
-
-
 
