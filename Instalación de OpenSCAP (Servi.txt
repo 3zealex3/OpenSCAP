@@ -66,13 +66,15 @@ even_deny_root
 
 
 
+----------------Firewall----------------------------
 
---------------Firewall---------------------------------------
 sudo firewall-cmd --zone=public --change-interface=ens160 --permanent
 sudo firewall-cmd --zone=public --add-service={https,https,ssh} --permanent
 
 
----------------------Cripto-----------------------------------
+
+
+----------------------RSA---------------------------------------
 sudo aide --init
 sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 
@@ -90,6 +92,46 @@ sudo nano /etc/crypto-policies/back-ends/openssh.config
 
 sudo systemctl restart sshd
 
+---------------------Auditoria---------------------------
+sudo nano /etc/audit/rules.d/hardening.rules
+
+-w /etc/group -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/security/opasswd -p wa -k identity
+
+-a always,exit -F arch=b64 -S chmod,chown,fchmod,fchown,lchown -k perm_mod
+-a always,exit -F arch=b64 -S fchmodat,fchownat -k perm_mod
+-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr -k perm_mod
+-a always,exit -F arch=b64 -S removexattr,lremovexattr,fremovexattr -k perm_mod
+
+-a always,exit -F arch=b64 -S unlink,unlinkat -k delete
+-a always,exit -F arch=b64 -S rename,renameat -k delete
+-a always,exit -F arch=b64 -S rmdir -k delete
+
+-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -k time-change
+-w /etc/localtime -p wa -k time-change
+
+-w /var/log/faillog -p wa -k logins
+-w /var/log/lastlog -p wa -k logins
+-w /var/log/tallylog -p wa -k logins
+
+-a always,exit -F arch=b64 -S mount -k mounts
+
+-a always,exit -F path=/usr/bin/sudo -F perm=x -k privileged
+-a always,exit -F path=/usr/bin/passwd -F perm=x -k privileged
+-a always,exit -F path=/usr/bin/chsh -F perm=x -k privileged
+-a always,exit -F path=/usr/bin/chfn -F perm=x -k privileged
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -k privileged
+
+-w /var/log/audit/ -p wa -k auditlog
+
+-e 2
 
 
 
+-------Aplicar reglas--------------
+
+sudo augenrules --load
+sudo auditctl -l
